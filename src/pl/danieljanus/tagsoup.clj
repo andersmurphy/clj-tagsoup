@@ -1,13 +1,9 @@
 (ns pl.danieljanus.tagsoup
   (:require [clojure.zip :as zip]
-            [clojure.xml :as xml]
-            [clojure.data.xml :as lazy-xml])
+            [clojure.data.xml :as xml])
   (:import (org.ccil.cowan.tagsoup Parser)
            (java.net URI URL MalformedURLException Socket)
-           (java.io InputStream File FileInputStream ByteArrayInputStream BufferedInputStream InputStreamReader BufferedReader)
-           (javax.xml.stream XMLEventReader XMLStreamConstants)
-           (javax.xml.stream.events Attribute StartElement XMLEvent)
-           (javanet.staxutils ContentHandlerToXMLEventWriter XMLEventPipe)
+           (java.io InputStream File FileInputStream ByteArrayInputStream BufferedInputStream)
            (org.xml.sax Attributes InputSource)))
 
 (defn- attributes-map
@@ -61,7 +57,7 @@
 (defmethod input-stream String [#^String x]
   (try (let [url (URL. x)]
          (input-stream url))
-       (catch MalformedURLException e
+       (catch MalformedURLException _
          (input-stream (File. x)))))
 
 (defmethod input-stream Socket [#^Socket x]
@@ -175,53 +171,3 @@ representing one), the latter is preferred."
 in the same format as clojure.xml/parse."
   [input]
   (xml/parse input startparse-tagsoup))
-
-(defn- xml-name
-  "Returns the local part of the name of a given XML entity as a keyword."
-  [^StartElement x]
-  (keyword (.getLocalPart (.getName x))))
-
-(defn eventize
-  "Convert a javax.xml.stream.events.XMLEvent to a clojure.data.xml.Event."
-  [^XMLEvent ev]
-  (condp = (.getEventType ev)
-    XMLStreamConstants/START_ELEMENT
-    (lazy-xml/event :start-element
-                    (xml-name ev)
-                    (into {} (map (fn [^Attribute attr] [(xml-name attr) (.getValue attr)]) (iterator-seq (.getAttributes ev))))
-                    nil)
-    XMLStreamConstants/END_ELEMENT
-    (lazy-xml/event :end-element
-                    (xml-name ev)
-                    nil
-                    nil)
-    XMLStreamConstants/CHARACTERS
-    (lazy-xml/event :characters nil nil (.getData ev))
-    nil))
-
-(defn event-seq
-  "Like clojure.data.xml/pull-seq, but works on XMLEventReaders instead of stream readers."
-  [^XMLEventReader ereader]
-  (keep eventize (iterator-seq ereader)))
-
-(defn cancellable-lazy-parse-xml
-  [input]
-  (let [pipe (XMLEventPipe.)
-        ereader (.getReadEnd pipe)
-        ewriter (.getWriteEnd pipe)
-        [^Parser parser ^InputSource source] (make-parser-and-source input)]
-    (.setContentHandler parser (ContentHandlerToXMLEventWriter. ewriter))
-    {:future (future
-               (try
-                 (.parse parser source)
-                 (finally (.close ewriter))))
-     :data (event-seq ereader)}))
-
-(defn lazy-parse-xml
-  "Parses the XML using TagSoup and as result, returns a lazy
-sequence of elements in the same format as
-clojure.data.xml/source-seq.  Parsing happens on a background thread,
-from which XML events are reported to the calling thread via a
-XMLEventPipe."
-  [input]
-  (:data (cancellable-lazy-parse-xml input)))

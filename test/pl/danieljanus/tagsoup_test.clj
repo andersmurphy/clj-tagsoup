@@ -1,7 +1,7 @@
 (ns pl.danieljanus.tagsoup-test
-  (:use
-   pl.danieljanus.tagsoup
-   clojure.test))
+  (:require
+   [pl.danieljanus.tagsoup :refer [parse-string]]
+   [clojure.test :refer [deftest is]]))
 
 (deftest parse-string-test
   (is (= [:html {} [:body {} [:p {} "foo"]]]

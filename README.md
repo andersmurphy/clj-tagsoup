@@ -1,11 +1,9 @@
-[![Clojars Project](http://clojars.org/clj-tagsoup/clj-tagsoup/latest-version.svg)](http://clojars.org/clj-tagsoup/clj-tagsoup)
-
 clj-tagsoup
 ===========
 
 This is a HTML parser for Clojure, somewhat akin to Common Lisp's
 [cl-html-parse].  It is a wrapper around the [TagSoup] Java SAX
-parser, but has a DOM interface.  It is buildable by [Leiningen].
+parser, but has a DOM interface.
 
 Usage
 -----
@@ -35,25 +33,24 @@ prevents you to use it to parse arbitrary (potentially malformed)
 XML. The `:xml` keyword argument causes clj-tagsoup to take into
 consideration the XML header when detecting the encoding.
 
-There are two other options for parsing XML:
+There is one other options for parsing XML:
 
  * `parse-xml` just invokes `clojure.xml/parse` with TagSoup, so
    the output format is compatible with `clojure.xml` and is not
    the one described above.
- * `lazy-parse-xml` (introduced in clj-tagsoup 0.3.0) returns a 
-   lazy sequence of `Event` records defined by `clojure.data.xml`,
-   similarly to the `source-seq` function from that library.
+
+Installing
+-------
+
+Add then following to your deps.edn:
+
+```clojure
+clj-tagsoup/clj-tagsoup {:git/url "https://github.com/andersmurphy/clj-tagsoup"
+            :git/sha ""}
+```
 
 Example
 -------
-
-*project.clj*:
-```clojure
-(defproject clj-tagsoup-example "0.0.1"
-  :dependencies [[clj-tagsoup/clj-tagsoup "0.3.0"]])
-```
-
-`lein repl`:
 
 ```clojure
 (use 'pl.danieljanus.tagsoup)
@@ -86,12 +83,7 @@ FAQ
    
  * What's with the dependency on stax-utils?
  
-   It's for `lazy-parse-xml`. It's needed because that function uses [clojure.data.xml], which under the hood
-   uses the StAX API. TagSoup is a SAX parser, so a bridge between the two parsing APIs is needed.
-
-   If you don't use `lazy-parse-xml`, you can optionally exclude stax-utils from your project.clj, like this:
-   
-        :dependencies [[clj-tagsoup "0.3.0" :exclusions [net.java.dev.stax-utils/stax-utils]]]
+ This fork has remove the dependency on stax-utils as it doesn't offer lazy xml parsing. 
 
 Author
 ------
