@@ -10,7 +10,8 @@
   "Converts an Attributes object into a Clojure map,"
   [^Attributes attrs]
   (into {}
-        (map #(vector (keyword (.getQName attrs %)) (.getValue attrs %)) (range (.getLength attrs)))))
+    (map #(vector (keyword (.getQName attrs %))
+            (.getValue attrs ^long %)) (range (.getLength attrs)))))
 
 (defn tag
   "Returns the tag name of a given HTML tree node as a keyword."
@@ -70,7 +71,7 @@
   "Reads XML encoding declaration from a BufferedInputStream."
   [^BufferedInputStream stream]
   (let [arr-size 1024
-        arr (make-array Byte/TYPE arr-size)]
+        ^byte/1 arr (make-array Byte/TYPE arr-size)]
     (.mark stream arr-size)
     (loop [offset 0]
       (let [nread (.read stream arr offset (- arr-size offset))]
@@ -124,8 +125,9 @@ representing one), the latter is preferred."
                               (var-set tree (-> tree var-get (zip/append-child data))))
                             (var-set pcdata "")))
           parser (proxy [Parser] []
-                   (pcdata [buf offset length]
-                     (var-set pcdata (str (var-get pcdata) (String. buf offset length))))
+                   (pcdata [^char/1 buf ^Integer offset ^Integer length]
+                     (var-set pcdata (str (var-get pcdata)
+                                         (String. buf offset length))))
                    (startElement [uri localname qname attrs]
                      (flush-pcdata)
                      (let [attrs (attributes-map attrs)
