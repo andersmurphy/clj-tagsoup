@@ -46,7 +46,7 @@ Add then following to your deps.edn:
 
 ```clojure
 clj-tagsoup/clj-tagsoup {:git/url "https://github.com/andersmurphy/clj-tagsoup"
-            :git/sha "38c1422585a5db9ea90ea058854b74ac19841d43"}
+            :git/sha "cb5f48997f8c5354c9c639eaa9bc4f0e264b5f9f"}
 ```
 
 Example
