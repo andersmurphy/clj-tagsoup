@@ -1,4 +1,4 @@
-This fork removes dependency on `stax-utils` and `clojure.data.xml` as it only supports converting html/xml to hiccup format.
+This fork removes dependency on `stax-utils` and `clojure.data.xml` as it only supports converting html/xml to hiccup format. I wanted a lightweight, low dependency html parser that outputs hiccup and doesn't come with a predefined html query mechanism.
 
 clj-tagsoup
 ===========
@@ -42,7 +42,7 @@ Add then following to your deps.edn:
 
 ```clojure
 clj-tagsoup/clj-tagsoup {:git/url "https://github.com/andersmurphy/clj-tagsoup"
-            :git/sha "cb5f48997f8c5354c9c639eaa9bc4f0e264b5f9f"}
+            :git/sha "2e60e1108d20909ac00d5b8e743139f939725e70"}
 ```
 
 Example
