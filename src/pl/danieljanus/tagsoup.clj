@@ -1,6 +1,5 @@
 (ns pl.danieljanus.tagsoup
-  (:require [clojure.zip :as zip]
-            [clojure.data.xml :as xml])
+  (:require [clojure.zip :as zip])
   (:import (org.ccil.cowan.tagsoup Parser)
            (java.net URI URL MalformedURLException Socket)
            (java.io InputStream File FileInputStream ByteArrayInputStream BufferedInputStream)
@@ -83,25 +82,6 @@
       (when (.startsWith s "<?xml ")
         (second (re-find #"encoding=\"(.*?)\"" s))))))
 
-(defn- make-parser-and-source
-  "Helper for startparse-tagsoup and lazy-parse-xml."
-  [source]
-  (let [parser (Parser.)
-        stream (-> ((input-stream source) :stream) BufferedInputStream.)
-        source (InputSource. stream)
-        xml-encoding (read-xml-encoding-declaration stream)]
-    (when xml-encoding
-      (.setEncoding source xml-encoding))
-    [parser source]))
-
-(defn- startparse-tagsoup
-  "A startparse function compatible with clojure.xml."
-  [input content-handler]
-  (let [[^Parser parser ^InputSource source] (make-parser-and-source input)]
-    (.setContentHandler parser content-handler)
-    (.parse parser source)
-    parser))
-
 (defn parse
   "Parses a file or HTTP URL.  file may be anything that can be fed
 to clojure.java.io/reader.  If strip-whitespace is true
@@ -167,9 +147,3 @@ representing one), the latter is preferred."
   "Parses a given string as HTML, passing options to `parse'."
   [^String s & options]
   (apply parse (-> s .getBytes ByteArrayInputStream.) options))
-
-(defn parse-xml
-  "Parses a given XML using TagSoup and returns the parse result
-in the same format as clojure.xml/parse."
-  [input]
-  (xml/parse input startparse-tagsoup))

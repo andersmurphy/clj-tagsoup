@@ -1,3 +1,5 @@
+This fork removes dependency on `stax-utils` and `clojure.data.xml` as it only supports converting html/xml to hiccup format.
+
 clj-tagsoup
 ===========
 
@@ -33,12 +35,6 @@ prevents you to use it to parse arbitrary (potentially malformed)
 XML. The `:xml` keyword argument causes clj-tagsoup to take into
 consideration the XML header when detecting the encoding.
 
-There is one other options for parsing XML:
-
- * `parse-xml` just invokes `clojure.xml/parse` with TagSoup, so
-   the output format is compatible with `clojure.xml` and is not
-   the one described above.
-
 Installing
 -------
 
@@ -66,35 +62,15 @@ Example
                      [:a {:shape "rect", :href "http://www.rfc-editor.org/rfc/rfc2606.txt"} "RFC \n  2606"]
                      ", Section 3."]]]
 ```
-                         
-FAQ
----
 
- * Why not just use [Enlive]?
-   
-   Truth be told, I wrote clj-tagsoup prior to discovering Enlive, which is an excellent library. That said,
-   I believe clj-tagsoup has its niche. Here is an _à la carte_ list of differences between the two:
-  
-   - Enlive is a full-blown templating library; clj-tagsoup just parses HTML (and XML).
-   - Unlike Enlive, clj-tagsoup's `parse` function goes out of its way to return parsed data in a proper
-     encoding. It will detect the `<meta http-equiv="...">` tag in your data and reinterpret the input
-     stream to the indicated encoding as needed.
-   - clj-tagsoup boasts a way to lazily parse XML with TagSoup.
-   
- * What's with the dependency on stax-utils?
- 
- This fork has remove the dependency on stax-utils as it doesn't offer lazy xml parsing. 
-
-Author
+Original Author
 ------
 
 clj-tagsoup was written by [Daniel Janus].
 
  [cl-html-parse]: http://www.cliki.net/CL-HTML-Parse
- [clojure.data.xml]: https://github.com/clojure/data.xml
  [reader]: http://richhickey.github.com/clojure-contrib/branch-1.1.x/duck-streams-api.html#clojure.contrib.duck-streams/reader
  [Daniel Janus]: http://danieljanus.pl
  [Enlive]: http://github.com/cgrand/enlive
  [TagSoup]: http://home.ccil.org/~cowan/XML/tagsoup/
- [Leiningen]: http://github.com/technomancy/leiningen
  [hiccup]: http://github.com/weavejester/hiccup
